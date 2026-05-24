@@ -50,7 +50,7 @@ def ppo_update(args, agent, optimizer, envs, storage, advantages, returns):
     b_inds = np.arange(args.batch_size)
     clipfracs = []
 
-    for epoch in range(args.update_epochs):
+    for _epoch in range(args.update_epochs):
         np.random.shuffle(b_inds)
         for start in range(0, args.batch_size, args.minibatch_size):
             end = start + args.minibatch_size

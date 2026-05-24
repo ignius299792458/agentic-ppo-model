@@ -73,21 +73,30 @@ def main():
     next_obs, _ = envs.reset()
     next_obs = torch.Tensor(next_obs).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
+    
+    # calculate number of updates
     num_updates = args.total_timesteps // args.batch_size
 
+    # for each update
     for update in range(1, num_updates + 1):
+        # anneal learning rate
         if args.anneal_lr:
             frac = 1.0 - (update - 1.0) / num_updates
+            # update learning rate
             optimizer.param_groups[0]["lr"] = frac * args.learning_rate
 
+        # rollout
+        # collect rollout experience
         next_obs, next_done, global_step = rollout(
             args, agent, envs, device, storage, next_obs, next_done, global_step, writer
         )
 
+        # compute advantages
         advantages, returns = compute_advantages(
             args, agent, next_obs, next_done, storage, device
         )
-
+        
+        # run PPO update
         metrics = ppo_update(args, agent, optimizer, envs, storage, advantages, returns)
 
         sps = int(global_step / (time.time() - start_time))
