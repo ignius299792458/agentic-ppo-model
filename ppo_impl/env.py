@@ -245,7 +245,4 @@ if __name__ == "__main__":
     print("6.  With render mode = human ")
     print("=" * 55)
     with PlaygroundEnv("CartPole-v1", render_mode="human") as cartpole_env:
-      ep = cartpole_env.run_episode(seed=99)
-      print(f"  total_reward={ep['total_reward']}  steps={ep['steps']}")
-      print(f"  first obs : {ep['observations'][0]}")
-      print(f"  actions   : {ep['actions'][:10]} ...")
+      ep_data = cartpole_env.run_episodes(n=10, seed=99)
