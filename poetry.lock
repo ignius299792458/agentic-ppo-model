@@ -123,6 +123,18 @@ files = [
 ]
 
 [[package]]
+name = "config"
+version = "0.5.1"
+description = "A hierarchical, easy-to-use, powerful configuration module for Python"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "config-0.5.1-py2.py3-none-any.whl", hash = "sha256:79ffa009ff2663cc8ca29e56bcec031c044609d4bafaa4f884132a413101ce84"},
+    {file = "config-0.5.1.zip", hash = "sha256:2dd4a03aa383d30711d5a3325a1858de225328d61950a85be5b74c100f63016d"},
+]
+
+[[package]]
 name = "cuda-bindings"
 version = "13.3.1"
 description = "Python bindings for CUDA"
@@ -1327,4 +1339,4 @@ markers = {dev = "python_version < \"3.13\""}
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "fb2e5c2a05f538a6c7516f8a3833e6d836da1c706427fcf39274df9246b2c35c"
+content-hash = "0af2478fadeac43b9ecf5de7ec84f15e6731489e252021057fb40d74f9e6f4c9"
