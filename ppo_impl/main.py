@@ -107,7 +107,7 @@ def train(cfg: Config):
 
         recent = ep_history[-10:] if ep_history else [0.0]
         print(
-            f"iter {it + 1:>3}/{cfg.total_iterations}  "
+            f"PPO Training : iter {it + 1:>3}/{cfg.total_iterations}  "
             f"reward(last10)={np.mean(recent):7.1f}  episodes={len(ep_history)}"
         )
 
@@ -117,7 +117,7 @@ def train(cfg: Config):
 def without_train(cfg: Config):
     printHeaderInfo(f"Running Env: {cfg.env_name} without training policy.")
     env = PlaygroundEnv(env_name=cfg.env_name, render_mode=cfg.render_mode)
-    env.run_episodes(n=100, policy=None, seed=cfg.seed, verbose=True)
+    env.run_episodes(n=200, policy=None, seed=cfg.seed, verbose=True)
 
 if __name__ == "__main__":
     

@@ -27,7 +27,7 @@ class Config:
     entropy_coef: float = 0.01
 
     # loop
-    rollout_steps: int = 2048
+    rollout_steps: int = 128 # Set 2048 value for good outcome
     update_epochs: int = 10
     minibatch_size: int = 64
     total_iterations: int = 50
