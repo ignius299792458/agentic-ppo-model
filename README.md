@@ -19,6 +19,10 @@ batched — `(1, obs_dim)` during rollout, `(B, obs_dim)` during the update.
 `obs_dim` and `act_dim` are read from the env's spaces, so swapping
 environments needs no code changes.
 
+## Demo
+
+[![Program run demo video](./docs/cartpole_policy_comparison_thumnail.png)](./docs/cartpole_policy_comparison_final.mp4)
+
 ## How to run
 
 The project is `poetry` manager setup. Therefore, to install all required dependencies, run this
