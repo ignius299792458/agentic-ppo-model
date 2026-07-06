@@ -16,8 +16,16 @@ def _mlp(in_dim: int, hidden: int, n_hidden: int, out_dim: int) -> nn.Sequential
 class Actor(nn.Module):
     """Policy network. obs -> logits over discrete actions."""
 
-    def __init__(self, obs_dim: int, act_dim: int, hidden: int = 64, n_hidden: int = 2):
+    def __init__(
+        self,
+        obs_dim: int,
+        act_dim: int,
+        hidden: int = 64,
+        n_hidden: int = 2,
+        verbose: bool = False,
+    ):
         super().__init__()
+        self.verbose = verbose
         self.net = _mlp(obs_dim, hidden, n_hidden, act_dim)
 
     def forward(self, obs: torch.Tensor) -> torch.Tensor:
@@ -25,7 +33,12 @@ class Actor(nn.Module):
         return self.net(obs)
 
     def distribution(self, obs: torch.Tensor) -> Categorical:
-        return Categorical(logits=self.forward(obs))
+        logits = self.forward(obs)
+
+        if self.verbose:
+            print("ACTOR --- Logits: ", logits)
+
+        return Categorical(logits=logits)
 
     @torch.no_grad()
     def act(self, obs_np: np.ndarray):
@@ -34,6 +47,10 @@ class Actor(nn.Module):
         obs = torch.as_tensor(obs_np, dtype=torch.float32, device=device).unsqueeze(0)
         dist = self.distribution(obs)
         action = dist.sample()
+
+        if self.verbose:
+            print(f"ACTOR --- obs: {obs}, dist: {dist}, action: {action}")
+
         return int(action.item()), float(dist.log_prob(action).item())
 
     def evaluate_actions(self, obs: torch.Tensor, actions: torch.Tensor):

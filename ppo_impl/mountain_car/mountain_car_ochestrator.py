@@ -31,7 +31,7 @@ def train(cfg: Config):
     np.random.seed(cfg.seed)
     device = torch.device(cfg.device)
 
-    env = PlaygroundEnv(cfg.env_name, cfg.render_mode, cfg.max_steps)
+    env = PlaygroundEnv(cfg.env_name, cfg.render_mode, cfg.max_steps, cfg.verbose)
     actor = Actor(
         env.obs_dim, env.act_dim, cfg.hidden_size, cfg.n_hidden, cfg.verbose
     ).to(device)
@@ -125,7 +125,12 @@ def train(cfg: Config):
 
 def without_train(cfg: Config):
     printHeaderInfo(f"Running Env: {cfg.env_name} without training policy.")
-    env = PlaygroundEnv(env_name=cfg.env_name, render_mode=cfg.render_mode)
+    env = PlaygroundEnv(
+        env_name=cfg.env_name,
+        render_mode=cfg.render_mode,
+        max_steps=None,
+        verbose=cfg.verbose,
+    )
     env.run_episodes(
         n=cfg.episodes,
         policy=None,
