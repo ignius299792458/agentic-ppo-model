@@ -31,9 +31,16 @@ def train(cfg: Config):
     np.random.seed(cfg.seed)
     device = torch.device(cfg.device)
 
-    env = PlaygroundEnv(cfg.env_name, cfg.render_mode, cfg.max_steps)
-    actor = Actor(env.obs_dim, env.act_dim, cfg.hidden_size, cfg.n_hidden).to(device)
-    critic = Critic(env.obs_dim, cfg.hidden_size, cfg.n_hidden).to(device)
+    env = PlaygroundEnv(
+        env_name=cfg.env_name,
+        render_mode=cfg.render_mode,
+        max_steps=cfg.max_steps,
+        verbose=cfg.verbose,
+    )
+    actor = Actor(
+        env.obs_dim, env.act_dim, cfg.hidden_size, cfg.n_hidden, cfg.verbose
+    ).to(device)
+    critic = Critic(env.obs_dim, cfg.hidden_size, cfg.n_hidden, cfg.verbose).to(device)
     opt_actor = torch.optim.Adam(actor.parameters(), lr=cfg.lr_actor)
     opt_critic = torch.optim.Adam(critic.parameters(), lr=cfg.lr_critic)
 
@@ -114,19 +121,24 @@ def train(cfg: Config):
     env.close()
     return actor, critic
 
+
 def without_train(cfg: Config):
     printHeaderInfo(f"Running Env: {cfg.env_name} without training policy.")
-    env = PlaygroundEnv(env_name=cfg.env_name, render_mode=cfg.render_mode)
-    env.run_episodes(n=200, policy=None, seed=cfg.seed, verbose=True)
+    env = PlaygroundEnv(
+        env_name=cfg.env_name, render_mode=cfg.render_mode, verbose=cfg.verbose
+    )
+    env.run_episodes(
+        n=200, policy=None, seed=cfg.seed, sleep_time=cfg.sleep_between_steps
+    )
+
 
 if __name__ == "__main__":
-    
+
     p1 = Process(target=train, args=(Config(),))
     p2 = Process(target=without_train, args=(Config(),))
-    
+
     p1.start()
     p2.start()
-    
+
     p1.join()
     p2.join()
-    

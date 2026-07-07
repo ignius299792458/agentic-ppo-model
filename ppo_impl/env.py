@@ -2,6 +2,7 @@ from typing import Callable, Optional
 
 import gymnasium as gym
 import numpy as np
+import time
 
 
 class PlaygroundEnv:
@@ -12,10 +13,12 @@ class PlaygroundEnv:
         env_name: str,
         render_mode: Optional[str] = None,
         max_steps: Optional[int] = None,
+        verbose: bool = False,
     ):
         self.env_name = env_name
         self.render_mode = render_mode
         self.max_steps = max_steps
+        self.verbose = verbose
 
         self.env: gym.Env = gym.make(id=env_name, render_mode=render_mode)
         self.observation_space = self.env.observation_space
@@ -44,6 +47,7 @@ class PlaygroundEnv:
         self,
         policy: Optional[Callable[[np.ndarray], int]] = None,
         seed: Optional[int] = None,
+        sleep_time: Optional[float] = None,
     ) -> dict:
         """Run one episode. `policy` maps a single obs -> action."""
         obs, _ = self.env.reset(seed=seed)
@@ -52,11 +56,18 @@ class PlaygroundEnv:
         actions: list[int] = []
         rewards: list[float] = []
         total_reward, step = 0.0, 0
+        done = False
 
         while True:
             # pass the CURRENT single observation, not the history
-            action = policy(obs) if policy is not None else self.action_space.sample()
+            action = policy(obs) if policy is not None else 2
             obs, reward, terminated, truncated, _ = self.env.step(action)
+            if self.verbose:
+                print(
+                    f"STEP: (run_episode) {step}\naction:{action}\nobs:{obs}\nreward:{reward}\ndone:{done}\n"
+                )
+            if sleep_time is not None:
+                time.sleep(sleep_time)
 
             observations.append(obs)
             actions.append(action)
@@ -81,19 +92,23 @@ class PlaygroundEnv:
         }
 
     def run_episodes(
-        self, n: int = 5, policy=None, seed: Optional[int] = None, verbose: bool = True
+        self,
+        n: int = 5,
+        policy=None,
+        seed: Optional[int] = None,
+        sleep_time: Optional[float] = None,
     ):
         self._episode_rewards.clear()
         self._episode_lengths.clear()
         results = []
         for i in range(n):
             ep_seed = None if seed is None else seed + i
-            r = self.run_episode(policy=policy, seed=ep_seed)
+            r = self.run_episode(policy=policy, seed=ep_seed, sleep_time=sleep_time)
             results.append(r)
-            if verbose:
+            if self.verbose:
                 label = "random" if policy is None else "policy"
                 print(
-                    f"  ep {i + 1:>3}/{n} [{label}] reward={r['total_reward']:7.1f} steps={r['steps']}"
+                    f"run_episode: ep {i + 1:>3}/{n} [{label}] reward={r['total_reward']:7.1f} steps={r['steps']}"
                 )
         return results
 
@@ -114,4 +129,4 @@ class PlaygroundEnv:
         self.env.close()
 
     def __repr__(self) -> str:
-        return f"PlaygroundEnv(env={self.env_name!r}, obs_dim={self.obs_dim}, act_dim={self.act_dim})"
+        return f"PlaygroundEnv(env={self.env_name!r}, obs_dim={self.obs_dim}, act_dim={self.act_dim}, verbase={self.verbose})"

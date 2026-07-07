@@ -11,19 +11,21 @@ GAE advantages, and runs the clipped PPO update. Nothing about the RL
 algorithm lives inside the networks — they are pure function approximators
 that answer "which action?" and "how good is this state?".
 
-## Flowchart of PPO
+## Flowchart of PPO (Eg: CartPole)
 
-![Flowchart](./docs/ppo_flowchart.png)
+![Flowchart (Eg: CartPole)](./docs/ppo_flowchart.png)
 Data shapes: a single observation is `(obs_dim,)`; networks receive it
 batched — `(1, obs_dim)` during rollout, `(B, obs_dim)` during the update.
 `obs_dim` and `act_dim` are read from the env's spaces, so swapping
 environments needs no code changes.
 
-## Demo
+## Demo (Eg: CartPole)
 
 [![Program run demo video](./docs/cartpole_policy_comparison_thumnail.png)](./docs/cartpole_policy_comparison_final.mp4)
 
 ## How to run
+
+### Setup
 
 The project is `poetry` manager setup. Therefore, to install all required dependencies, run this
 
@@ -33,19 +35,6 @@ poetry lock && poetry install
 
 > Make sure the specific venv python interpreter is selected.
 
-Run and Train with defaults (CartPole-v1):
-Using
+### Run and Train with defaults (CartPole-v1):
 
-1. Directly running the `python main.py`
-2. Using Debugger (Any python file), open main.py and run it on debug mode
-
-Tune anything via `config.py` (or construct a `Config(...)` in code and pass
-it to `train`). Common overrides: `env_name`, `total_iterations`,
-`rollout_steps`, `clip_eps`, `lr_actor`, `device`.
-
-```python
-from config import Config
-from main import train
-
-train(Config(env_name="CartPole-v1", total_iterations=50))
-```
+Using Debugger (Any python file), for example: open and select `./ppo_impl/cartpole/cartpole_ochestrator.py` file and run it on debug mode, follow same process for other games
