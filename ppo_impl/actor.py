@@ -36,7 +36,7 @@ class Actor(nn.Module):
         logits = self.forward(obs)
 
         if self.verbose:
-            print("ACTOR --- Logits: ", logits)
+            print("ACTOR --- (distribution) Logits: ", logits)
 
         return Categorical(logits=logits)
 
@@ -47,11 +47,12 @@ class Actor(nn.Module):
         obs = torch.as_tensor(obs_np, dtype=torch.float32, device=device).unsqueeze(0)
         dist = self.distribution(obs)
         action = dist.sample()
+        action_item, logit_items = int(action.item()), float(dist.log_prob(action).item())
 
         if self.verbose:
-            print(f"ACTOR --- obs: {obs}, dist: {dist}, action: {action}")
+            print(f"ACTOR --- (act) obs: {obs}, logits: {logit_items}, action: {action_item}")
 
-        return int(action.item()), float(dist.log_prob(action).item())
+        return action_item, logit_items
 
     def evaluate_actions(self, obs: torch.Tensor, actions: torch.Tensor):
         # update: batched obs (B, obs_dim), actions (B,) -> log_probs (B,), entropy (B,)

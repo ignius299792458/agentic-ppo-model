@@ -31,9 +31,9 @@ class Critic(nn.Module):
         # rollout: single obs (obs_dim,) -> V(s) float
         device = next(self.parameters()).device
         obs = torch.as_tensor(obs_np, dtype=torch.float32, device=device).unsqueeze(0)
-        value_f = self.forward(obs)
+        value_f = float(self.forward(obs).item())
 
         if self.verbose:
-            print(f"CRITIC --- obs: {obs}, value: {value_f}")
+            print(f"CRITIC --- (value) obs: {obs}, value: {value_f}")
 
-        return float(value_f.item())
+        return value_f

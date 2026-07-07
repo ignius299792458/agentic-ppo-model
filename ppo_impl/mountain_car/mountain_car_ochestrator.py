@@ -56,20 +56,25 @@ def train(cfg: Config):
             action, logp = actor.act(obs)  # obs -> action, log_prob
             value = critic.value(obs)  # same obs -> V(s)
             if cfg.verbose:
-                print(f"Rollout: {t} --> action: {action}, value: {value}")
+                print(f"\nRollout: {t} --> action: {action}, value: {value}")
             next_obs, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
 
-            obs_buf[t], act_buf[t], logp_buf[t] = obs, action, logp
-            rew_buf[t], val_buf[t], done_buf[t] = reward, value, float(done)
-
+            # log the TRUE reward, unmodified, so episode returns stay honest
             ep_reward += reward
+
+            # bootstrap on time-limit truncation (not a real end):
+            # add the value of the state we'd have continued from.
+            stored_reward = reward
+            if truncated and not terminated:
+                stored_reward += cfg.gamma * critic.value(next_obs)
+
+            obs_buf[t], act_buf[t], logp_buf[t] = obs, action, logp
+            rew_buf[t], val_buf[t], done_buf[t] = stored_reward, value, float(done)
+
             obs = next_obs
             if done:
-
-                if cfg.verbose:
-                    print(f"Rollout (Done): {t}, ep_reward:{ep_reward}")
-
+                print(f"\nRollout (Done): {t}, ep_reward:{ep_reward}, last_reward: {reward}")
                 ep_history.append(ep_reward)
                 ep_reward = 0.0
                 obs, _ = env.reset()

@@ -44,4 +44,4 @@ class Config:
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
     # logs
-    verbose: bool = True
+    verbose: bool = False

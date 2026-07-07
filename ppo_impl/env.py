@@ -60,11 +60,11 @@ class PlaygroundEnv:
 
         while True:
             # pass the CURRENT single observation, not the history
-            action = policy(obs) if policy is not None else self.action_space.sample()
+            action = policy(obs) if policy is not None else 2
             obs, reward, terminated, truncated, _ = self.env.step(action)
             if self.verbose:
                 print(
-                    f"STEP: {step}\naction:{action}\nobs:{obs}\nreward:{reward}\ndone:{done}\n"
+                    f"STEP: (run_episode) {step}\naction:{action}\nobs:{obs}\nreward:{reward}\ndone:{done}\n"
                 )
             if sleep_time is not None:
                 time.sleep(sleep_time)
@@ -108,7 +108,7 @@ class PlaygroundEnv:
             if self.verbose:
                 label = "random" if policy is None else "policy"
                 print(
-                    f"  ep {i + 1:>3}/{n} [{label}] reward={r['total_reward']:7.1f} steps={r['steps']}"
+                    f"run_episode: ep {i + 1:>3}/{n} [{label}] reward={r['total_reward']:7.1f} steps={r['steps']}"
                 )
         return results
 
