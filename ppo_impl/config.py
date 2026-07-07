@@ -3,13 +3,13 @@ from typing import Optional
 
 import torch
 
-ENVS = {"cartpole": "CartPole-v1", "mountain_car": "MountainCar-v0"}
+ENVS = {"cartpole": "CartPole-v1", "mountain_car": "MountainCar-v0", "acrobot":"Acrobot-v1"}
 
 
 @dataclass
 class Config:
     # env
-    env_name: str = ENVS["mountain_car"]
+    env_name: str = ENVS["acrobot"]
     render_mode: Optional[str] = "human"
     max_steps: Optional[int] = None
 
